@@ -1,6 +1,4 @@
 # Real-Time Graph Analytics System with Neo4j and Kubernetes
-
-**Institution:** Arizona State University  
 **Dataset:** NYC Taxi Trip Data (March 2022, Bronx subset)  
 
 ---
