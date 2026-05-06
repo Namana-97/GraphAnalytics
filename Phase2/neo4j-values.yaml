@@ -1,0 +1,57 @@
+neo4j:
+  name: "neo4j"
+  edition: "community"
+
+  image:
+    repository: neo4j
+    tag: "5.12.0"
+
+  acceptLicenseAgreement: "yes"
+
+  core:
+    standalone: true
+    replicas: 1
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "400Mi"
+      limits:
+        cpu: "500m"
+        memory: "700Mi"
+
+
+  auth:
+    enabled: true
+    neo4jPassword: "processingpipeline"
+
+  neo4jConfig:
+    dbms.default_listen_address: "0.0.0.0"
+    dbms.security.procedures.unrestricted: "apoc.*,gds.*"
+    dbms.security.procedures.allowlist: "apoc.*,gds.*"
+    dbms.directories.plugins: "/plugins"
+
+  sidecarContainers:
+    - name: install-gds
+      image: curlimages/curl:8.1.2
+      command:
+        - sh
+        - -c
+        - |
+          echo "Downloading GDS plugin..."
+          curl -sSL https://github.com/neo4j/graph-data-science/releases/download/2.21.0/graph-data-science-2.21.0.jar -o /plugins/graph-data-science-2.21.0.jar
+      volumeMounts:
+        - name: plugins
+          mountPath: /plugins
+
+  extraVolumes:
+    - name: plugins
+      emptyDir: {}
+
+  extraVolumeMounts:
+    - name: plugins
+      mountPath: /plugins
+  
+volumes:
+  data:
+    mode: defaultStorageClass
+    size: 5Gi
